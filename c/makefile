@@ -1,7 +1,7 @@
 
-all: dm.exe dm_raw.exe  dedm.exe dedm_raw.exe
+all: dm.exe dm_raw.exe  dedm.exe dedm_raw.exe dmplay.exe
 
-experimental: dm_raw1.exe dm_rawlr.exe calcdyn.exe
+experiment: dm_raw1.exe dm_rawlr.exe calcdyn.exe
 
 tst.obj:  tst.c tst.h
 
@@ -16,6 +16,8 @@ dm_rawlr.obj:   dm_rawlr.c tst.h dmcommon.h
 dedm.obj:   dedm.c tst.h dmcommon.h
 
 dedm_raw.obj:   dedm_raw.c tst.h dmcommon.h
+
+dmplay_win.obj:   dmplay_win.c tst.h dmcommon.h
 
 dmcommon.obj:  dmcommon.c dmcommon.h
 
@@ -38,6 +40,9 @@ dedm.exe: dedm.obj dmcommon.obj tst.obj
 
 dedm_raw.exe: dedm_raw.obj dmcommon.obj tst.obj 
 	link $(LFLAGS) dedm_raw dmcommon tst /nologo /out:dedm_raw.exe
+
+dmplay.exe: dmplay_win.obj dmcommon.obj tst.obj 
+	link $(LFLAGS) dmplay_win dmcommon tst winmm.lib /nologo /out:dmplay.exe	
 
 calcdyn.exe: calcdyn.obj tst.obj 
 	link $(LFLAGS) calcdyn tst /nologo /out:calcdyn.exe
