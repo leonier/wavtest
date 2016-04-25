@@ -1,7 +1,7 @@
 
 all: dm.exe dm_raw.exe  dedm.exe dedm_raw.exe dmplay.exe
 
-experiment: dm_raw1.exe dm_rawlr.exe calcdyn.exe
+experimental: dm_raw1.exe dm_rawlr.exe calcdyn.exe
 
 tst.obj:  tst.c tst.h
 
