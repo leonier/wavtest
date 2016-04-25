@@ -1,3 +1,12 @@
+typedef struct wavinfo
+{
+		int srate;
+		int channel;
+		int bits;
+		int datalen;
+		int samples;
+}wavinfo;
+
 int parsewaveheader(unsigned char* wavhead, wavinfo* winfo);
 int finddatachunk(FILE* file);
 void writedatachunkhead(unsigned char* hdr, int wchannel, int wbits, int nsamples);
