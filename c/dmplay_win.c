@@ -84,7 +84,14 @@ int main(int argc, char* argv[])
 			printf("not a dm file!\n");
 			exit(0);
 		}
-		printf("DM delta value %d\n",dminfo->delta);
+		if(dminfo->delta<0x10000)
+			printf("DM delta value %d\n",dminfo->delta);
+		else
+		{
+			int deltal=dminfo->delta&0xffff;
+			int deltar=(dminfo->delta-deltal)/0x10000;
+			printf("DM delta value %d/%d\n",deltal,deltar);
+		}
 		if(dminfo->mode==MODE_TYPE1)
 			printf("Channel Delta Mode\n");
 		if(dminfo->mode==MODE_TYPE2)
@@ -301,7 +308,17 @@ int decodeDM(HANDLE hFile,  wavinfo* wav, dmarg* dminfo, unsigned char* buffer, 
 //	printf("buffer_size %d, load  %d samples\n",buffer_size, rsamples);	
 	switch(dminfo->mode)
 	{
+	int deltal, deltar;
 	case MODE_TYPE0:
+		if(dminfo->delta<65536)
+		{
+			deltal=deltar=dminfo->delta;
+		}
+		else
+		{
+			deltal=dminfo->delta&0xffff;
+			deltar=(dminfo->delta-deltal)/0x10000;
+		}
 		for(i=0; i<rsamples; i++)
 		{
 			if(!wcount)
@@ -324,9 +341,9 @@ int decodeDM(HANDLE hFile,  wavinfo* wav, dmarg* dminfo, unsigned char* buffer, 
 				bmask=0x80000000;
 			}
 		
-			sampl=dmp1bit(sampl,samp1l,dminfo->delta);
-			sampr=dmp1bit(sampr,samp1r,dminfo->delta);
-			
+
+			sampl=dmp1bit(sampl,samp1l,deltal);
+			sampr=dmp1bit(sampr,samp1r,deltar);
 	//		printf("%d %d %d\n",wcount,sampl,sampr);	
 			
 			pos=i*((wav->bits*wav->channel)/8);

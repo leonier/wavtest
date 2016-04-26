@@ -22,7 +22,14 @@ main()
 		printf("not a dm file!\n");
 		exit(0);
 	}
-	printf("DM delta value %d\n",dminfo->delta);
+	if(dminfo->delta<0x10000)
+		printf("DM delta value %d\n",dminfo->delta);
+	else
+	{
+		int deltal=dminfo->delta&0xffff;
+		int deltar=(dminfo->delta-deltal)/0x10000;
+		printf("DM delta value %d/%d\n",deltal,deltar);
+	}
 	if(dminfo->mode==MODE_TYPE1)
 		printf("Channel Delta Mode\n");
 	if(dminfo->mode==MODE_TYPE2)
@@ -70,7 +77,17 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 	
 	switch(dminfo->mode)
 	{
+	int deltal, deltar;
 	case MODE_TYPE0:
+		if(dminfo->delta<65536)
+		{
+			deltal=deltar=dminfo->delta;
+		}
+		else
+		{
+			deltal=dminfo->delta&0xffff;
+			deltar=(dminfo->delta-deltal)/0x10000;
+		}
 		for(i=0; i<wav->samples; i++)
 		{
 			if(!wcount)
@@ -88,8 +105,8 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 				bmask=0x80000000;
 			}
 		
-			sampl=dmp1bit(sampl,samp1l,dminfo->delta);
-			sampr=dmp1bit(sampr,samp1r,dminfo->delta);
+			sampl=dmp1bit(sampl,samp1l,deltal);
+			sampr=dmp1bit(sampr,samp1r,deltar);
 		
 			samp[0]=sampl&0xff;
 			samp[1]=(sampl&0xff00)>>8;
@@ -117,7 +134,7 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 				bmask=0x80000000;
 			}
 		
-			sampl=dmp1bit(sampl,samp1l,dminfo->delta);
+			sampl=dmp1bit(sampl,samp1l,dminfo->delta&0xffff);
 		
 			samp[0]=sampl&0xff;
 			samp[1]=(sampl&0xff00)>>8;
@@ -144,8 +161,8 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 				bmask=0x80000000;
 			}
 		
-			sampl=dmp1bit(sampl,samp1l,dminfo->delta);
-			sampr=dmp1bit(sampr,samp1r,dminfo->delta);
+			sampl=dmp1bit(sampl,samp1l,dminfo->delta&0xffff);
+			sampr=dmp1bit(sampr,samp1r,dminfo->delta&0xffff);
 			
 			valuel=(sampl+sampr);
 			valuer=(sampr-sampl);
