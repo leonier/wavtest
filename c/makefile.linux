@@ -1,5 +1,5 @@
 
-all: dm.exe dm_raw.exe dm_raw_auto.exe dmenc.exe dmdec.exe dedm.exe dedm_raw.exe dmplay.exe
+all: dm.exe dm_raw.exe dm_raw_auto.exe dmenc.exe dmdec.exe dedm.exe dedm_raw.exe dmplay
 
 experimental: dm_raw1.exe dm_rawlr.exe dm_raw_autodelta.exe calcdyn.exe
 
@@ -25,7 +25,7 @@ dedm.o:   dedm.c tst.h dmcommon.h
 
 dedm_raw.o:   dedm_raw.c tst.h dmcommon.h
 
-dmplay_win.o:   dmplay_win.c tst.h dmcommon.h
+dmplay_alsa.o:   dmplay_alsa.c tst.h dmcommon.h
 
 dmcommon.o:  dmcommon.c dmcommon.h
 
@@ -61,8 +61,8 @@ dedm.exe: dedm.o dmcommon.o tst.o
 dedm_raw.exe: dedm_raw.o dmcommon.o tst.o 
 	gcc $(LFLAGS) dedm_raw.o dmcommon.o tst.o -odedm_raw
 
-dmplay.exe: dmplay_win.o dmcommon.o tst.o 
-	gcc $(LFLAGS)  dmplay_win.o dmcommon.o -lwinmm -odmplay	
+dmplay: dmplay_alsa.o dmcommon.o tst.o 
+	gcc $(LFLAGS)  dmplay_alsa.o dmcommon.o -lasound -odmplay	
 
 calcdyn.exe: calcdyn.o tst.o 
 	gcc $(LFLAGS) calcdyn.o tst.o  -ocalcdyn.exe
