@@ -105,7 +105,8 @@ int main(int argc, char* argv[])
 	else
 	{
 		printf("Sample rate %dHz, %d bits, %d channels\n",wi->srate,wi->bits,wi->channel);
-		printf("%d samples\n",wi->samples);
+		//printf("%d samples\n",wi->samples);
+		printf("Length %d:%d\n",(wi->samples/wi->srate)/60,(wi->samples/wi->srate)%60);
 	}
 	/*
 	* set up the WAVEFORMATEX structure.
