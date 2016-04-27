@@ -16,7 +16,7 @@ void calcavgdyn(FILE* fpi, wavinfo* wav, double* adyn, double* mdyn);
 
 main(int argc, char** argv)
 {
-	int i, custom_delta=1;
+	int i,j, custom_delta=1;
 	double avgdyn;
 	double maxdyn;
 	unsigned char* wavhead;
@@ -31,7 +31,12 @@ main(int argc, char** argv)
 	}
 	else
 	{
-		outfile=malloc(strlen(argv[1])+5);
+		outfile=malloc(strlen(argv[1])+4);
+		if(!outfile)
+		{
+			printf("Memory Allocation Error!\n");
+			exit(0);
+		}
 		if(argc<=3)
 		{
 			strcpy(outfile,argv[1]);
@@ -47,7 +52,6 @@ main(int argc, char** argv)
 			
 			if(argc==3)
 			{
-				int j;
 				for(j=0;j<strlen(argv[2]);j++)
 				{
 					if(!isdigit(argv[2][j]))
@@ -58,16 +62,39 @@ main(int argc, char** argv)
 				}
 				if(custom_delta==1)
 				{
+					
 					delta=atoi(argv[2]);
 				}
 				else
+				{
+					if(strlen(argv[2])>strlen(outfile))
+					{
+						free(outfile);
+						outfile=malloc(strlen(argv[2])+1);
+						if(!outfile)
+						{
+							printf("Memory Allocation Error!\n");
+							exit(0);
+						}						
+					}
 					strcpy(outfile, argv[2]);
+				}
 			}
 		}
 		else
 		{
-			int j;
+			if(strlen(argv[2])>strlen(outfile))
+			{
+				free(outfile);
+				outfile=malloc(strlen(argv[2])+1);
+				if(!outfile)
+				{
+					printf("Memory Allocation Error!\n");
+					exit(0);
+				}		
+			}	
 			strcpy(outfile, argv[2]);
+			
 			for(j=0;j<strlen(argv[3]);j++)
 			{
 				if(!isdigit(argv[3][j]))
@@ -87,12 +114,12 @@ main(int argc, char** argv)
 			}
 		}
 	}
-	
+	printf("Allocate memory of WAVE header\n");
 	wavhead=malloc(36);
 	fp=fopen(argv[1],"rb");
 	if(!fp)
 	{
-		printf("Error opening input file %s!", argv[1]);
+		printf("Error opening input file %s!\n", argv[1]);
 		exit(0);
 	}
 	fread(wavhead,36,1,fp);
