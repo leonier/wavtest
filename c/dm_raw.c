@@ -8,11 +8,34 @@
 
 FILE* fp;
 wavinfo wi;
+int delta=0;
 void makedm(FILE* fpi, wavinfo* wav);
 
-main()
+main(int argc, char** argv)
 {
+	int i, custom_delta=1;
 	unsigned char* wavhead;
+	if(argc<2)
+		custom_delta=0;
+	else
+	{
+		for(i=1;i<argc;i++)
+		{
+			int j;
+			for(j=0;j<strlen(argv[i]);j++)
+			{
+				if(!isdigit(argv[i][j]))
+				{
+					custom_delta=0;
+					break;
+				}
+			}
+			if(custom_delta=1)
+			{
+				delta=atoi(argv[i]);
+			}
+		}
+	}
 	wavhead=malloc(36);
 	fp=fopen("d.wav","rb");
 	fread(wavhead,36,1,fp);
@@ -25,6 +48,15 @@ main()
 	wi.datalen=finddatachunk(fp);
 	wi.samples=wi.datalen/((wi.bits/8)*wi.channel);
 	printf("WAV data length %d\n",wi.datalen);
+	if(!delta)
+	{
+		delta=DELTA;
+		printf("Use default DELTA = %d\n",delta);
+	}
+	else
+	{
+		printf("Use custom DELTA = %d\n",delta);
+	}
 	makedm(fp, &wi);
 	fclose(fp);
 	free(wavhead);
@@ -113,8 +145,8 @@ void makedm(FILE* fpi, wavinfo* wav)
 		//samp1l=samp2l;
 		//samp1r=samp2r;*/
 		
-		samp1l=dmp1bit(sampoutl,samp1l,DELTA);
-		samp1r=dmp1bit(sampoutr,samp1r,DELTA);
+		samp1l=dmp1bit(sampoutl,samp1l,delta);
+		samp1r=dmp1bit(sampoutr,samp1r,delta);
 	}
 	if(wcount)
 		fwrite(&wbuf,4,1,fpo);

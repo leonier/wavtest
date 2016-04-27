@@ -1,5 +1,5 @@
 #define DELTA 4096
-#define QVALUE 16384
+#define QVALUE 3999
 #define MAGICNUM 0x6d645f6c //"l_dm"
 #define MODE_TYPE0 0x100
 #define MODE_TYPE1 0x101
