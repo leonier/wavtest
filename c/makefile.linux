@@ -1,0 +1,75 @@
+
+all: dm.exe dm_raw.exe dm_raw_auto.exe dmenc.exe dmdec.exe dedm.exe dedm_raw.exe dmplay.exe
+
+experimental: dm_raw1.exe dm_rawlr.exe dm_raw_autodelta.exe calcdyn.exe
+
+tst.o:  tst.c tst.h
+
+dm.o:   dm.c tst.h dmcommon.h
+
+dm_raw.o:   dm_raw.c tst.h dmcommon.h
+
+dm_raw_auto.o:   dm_raw_auto.c tst.h dmcommon.h
+
+dm_raw_autodelta.o:   dm_raw_autodelta.c tst.h dmcommon.h
+
+dmenc.o:   dmenc.c tst.h dmcommon.h
+
+dmdec.o:   dmdec.c tst.h dmcommon.h
+
+dm_raw1.o:   dm_raw1.c tst.h dmcommon.h
+
+dm_rawlr.o:   dm_rawlr.c tst.h dmcommon.h
+
+dedm.o:   dedm.c tst.h dmcommon.h
+
+dedm_raw.o:   dedm_raw.c tst.h dmcommon.h
+
+dmplay_win.o:   dmplay_win.c tst.h dmcommon.h
+
+dmcommon.o:  dmcommon.c dmcommon.h
+
+calcdyn.o: calcdyn.c tst.h
+
+dm.exe: dm.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dm.o dmcommon.o tst.o  -odm
+	
+dm_raw.exe: dm_raw.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dm_raw.o dmcommon.o tst.o  -odm_raw
+	
+dm_raw1.exe: dm_raw1.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dm_raw1.o dmcommon.o tst.o  -odm_raw1
+
+dm_rawlr.exe: dm_rawlr.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dm_rawlr.o dmcommon.o tst.o  -odm_rawlr
+
+dm_raw_auto.exe: dm_raw_auto.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dm_raw_auto.o dmcommon.o tst.o -odm_raw_auto
+	
+dm_raw_autodelta.exe: dm_raw_autodelta.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dm_raw_autodelta.o dmcommon.o tst.o -odm_raw_autodelta
+	
+dmenc.exe: dmenc.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dmenc.o dmcommon.o tst.o -odmenc
+
+dmdec.exe: dmdec.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dmdec.o dmcommon.o tst.o -odmdec
+	
+dedm.exe: dedm.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dedm.o dmcommon.o tst.o -odedm
+
+dedm_raw.exe: dedm_raw.o dmcommon.o tst.o 
+	gcc $(LFLAGS) dedm_raw.o dmcommon.o tst.o -odedm_raw
+
+dmplay.exe: dmplay_win.o dmcommon.o tst.o 
+	gcc $(LFLAGS)  dmplay_win.o dmcommon.o -lwinmm -odmplay	
+
+calcdyn.exe: calcdyn.o tst.o 
+	gcc $(LFLAGS) calcdyn.o tst.o  -ocalcdyn.exe
+
+.c.o:
+	gcc $(CFLAGS) -c -O2 $*.c
+
+clean:  
+	rm *.exe
+	rm *.o
