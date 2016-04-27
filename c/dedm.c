@@ -31,7 +31,7 @@ main(int argc, char** argv)
 					break;
 				}
 			}
-			if(custom_delta=1)
+			if(custom_delta==1)
 			{
 				delta=atoi(argv[i]);
 			}

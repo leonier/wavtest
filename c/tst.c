@@ -114,7 +114,7 @@ int finddatachunk(FILE* file)
 		{
 			if(dafound)
 			{
-				printf("data chunk found!\n");
+				//printf("data chunk found!\n");
 				fread(cdlen, 4, 1, file);
 				dlen=cdlen[0]+((int)(cdlen[1])<<8)+((int)(cdlen[2])<<16)+((int)(cdlen[3])<<24);
 				return dlen;

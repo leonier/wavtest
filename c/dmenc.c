@@ -11,7 +11,7 @@
 FILE* fp;
 wavinfo wi;
 int delta=0;
-void makedm(FILE* fpi, wavinfo* wav);
+void makedm(FILE* fpi, wavinfo* wav, unsigned char* outfile);
 void calcavgdyn(FILE* fpi, wavinfo* wav, double* adyn, double* mdyn);
 
 main(int argc, char** argv)
@@ -20,17 +20,57 @@ main(int argc, char** argv)
 	double avgdyn;
 	double maxdyn;
 	unsigned char* wavhead;
+	unsigned char* outfile;
+	
+	printf("leonier's DM encoder\n");
 	
 	if(argc<2)
-		custom_delta=0;
+	{
+		printf("Usage: %s wav-file [DM-file] [custom DELTA value]\n",argv[0]);
+		exit(0);
+	}
 	else
 	{
-		for(i=1;i<argc;i++)
+		outfile=malloc(strlen(argv[1])+5);
+		if(argc<=3)
+		{
+			strcpy(outfile,argv[1]);
+			for(i=strlen(outfile); i>=0; i--)
+			{
+				if(*(outfile+i)=='.')
+				{
+					*(outfile+i)='\0';
+					break;
+				}
+			}
+			strcat(outfile,".dm");
+			
+			if(argc==3)
+			{
+				int j;
+				for(j=0;j<strlen(argv[2]);j++)
+				{
+					if(!isdigit(argv[2][j]))
+					{
+						custom_delta=0;
+						break;
+					}
+				}
+				if(custom_delta==1)
+				{
+					delta=atoi(argv[2]);
+				}
+				else
+					strcpy(outfile, argv[2]);
+			}
+		}
+		else
 		{
 			int j;
-			for(j=0;j<strlen(argv[i]);j++)
+			strcpy(outfile, argv[2]);
+			for(j=0;j<strlen(argv[3]);j++)
 			{
-				if(!isdigit(argv[i][j]))
+				if(!isdigit(argv[3][j]))
 				{
 					custom_delta=0;
 					break;
@@ -38,12 +78,23 @@ main(int argc, char** argv)
 			}
 			if(custom_delta==1)
 			{
-				delta=atoi(argv[i]);
+				delta=atoi(argv[3]);
+			}				
+			else
+			{
+				printf("DELTA value must be a number!\n");
+				exit(0);
 			}
 		}
 	}
+	
 	wavhead=malloc(36);
-	fp=fopen("d.wav","rb");
+	fp=fopen(argv[1],"rb");
+	if(!fp)
+	{
+		printf("Error opening input file %s!", argv[1]);
+		exit(0);
+	}
 	fread(wavhead,36,1,fp);
 	if(!parsewaveheader(wavhead,&wi))
 	{
@@ -52,8 +103,13 @@ main(int argc, char** argv)
 	}
 	printf("WAV sample rate %d\nWAV bits per sample %d\nWAV channels %d\n",wi.srate, wi.bits,wi.channel);
 	wi.datalen=finddatachunk(fp);
+	if(!wi.datalen)
+	{
+		printf("WAV data chunk not found!\n");
+		exit(0);
+	}
 	wi.samples=wi.datalen/((wi.bits/8)*wi.channel);
-	printf("WAV data length %d\n",wi.datalen);
+	printf("WAV length %d:%d\n",(wi.samples/wi.srate)/60,(wi.samples/wi.srate)%60);
 	calcavgdyn(fp, &wi, &avgdyn, &maxdyn);
 	fclose(fp);
 
@@ -78,15 +134,16 @@ main(int argc, char** argv)
 	else
 		printf("Use custom DELTA = %d\n",delta);
 	
-	fp=fopen("d.wav","rb");
+	fp=fopen(argv[1],"rb");
 	fread(wavhead,36,1,fp);
 	wi.datalen=finddatachunk(fp);
 	wi.samples=wi.datalen/((wi.bits/8)*wi.channel);	
-	makedm(fp, &wi);
+	makedm(fp, &wi, outfile);
+	free(outfile);
 	free(wavhead);
 }
 
-void makedm(FILE* fpi, wavinfo* wav)
+void makedm(FILE* fpi, wavinfo* wav, unsigned char* outfile)
 {
 	FILE *fpo;
 	dmarg *dma;
@@ -101,13 +158,7 @@ void makedm(FILE* fpi, wavinfo* wav)
 	if(wav->channel!=2 || wav->bits!=16 )
 		return;
 		
-	/*head=malloc(36);
-	data=malloc(8);
-	writeriffhead(head, 36+8+wav->datalen);
-	writepcmfmt(head+12, wav->channel, wav->srate, wav->bits);
-	writedatachunkhead(data, wav->channel, wav->bits, wav->samples);*/
-	
-	fpo=fopen("test.dm","wb");
+	fpo=fopen(outfile,"wb");
 	if(!fpo)
 	{
 		printf("Open destination file failed!\n");
@@ -137,11 +188,6 @@ void makedm(FILE* fpi, wavinfo* wav)
 		samp2l=(samp[0]+((short)(samp[1])<<8));
 		samp2r=(samp[2]+((short)(samp[3])<<8));
 		
-
-		//sampout=samp2/2-samp1/2;
-		//sampoutl=samp2l-samp1l;		
-		//sampoutr=samp2r-samp1r;
-		
 		//1-bit quantize
 		sampoutl=quant1bit(samp1l,samp2l);
 		sampoutr=quant1bit(samp1r,samp2r);
@@ -160,14 +206,6 @@ void makedm(FILE* fpi, wavinfo* wav)
 			wbuf=0;
 			wcount=0;
 		}
-/*		samp[0]=sampoutl&0xff;
-		samp[1]=(sampoutl&0xff00)>>8;
-		samp[2]=sampoutr&0xff;
-		samp[3]=(sampoutr&0xff00)>>8;
-		
-		fwrite(samp,4,1,fpo);
-		//samp1l=samp2l;
-		//samp1r=samp2r;*/
 		
 		samp1l=dmp1bit(sampoutl,samp1l,delta);
 		samp1r=dmp1bit(sampoutr,samp1r,delta);
