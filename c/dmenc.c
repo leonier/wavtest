@@ -114,8 +114,12 @@ main(int argc, char** argv)
 			}
 		}
 	}
-	printf("Allocate memory of WAVE header\n");
 	wavhead=malloc(36);
+	if(!wavhead)
+	{
+		printf("Memory Allocation Error!\n");
+		exit(0);
+	}			
 	fp=fopen(argv[1],"rb");
 	if(!fp)
 	{

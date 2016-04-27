@@ -1,5 +1,5 @@
 
-all: dm.exe dm_raw.exe dm_raw_auto.exe dmenc.exe dedm.exe dedm_raw.exe dmplay.exe
+all: dm.exe dm_raw.exe dm_raw_auto.exe dmenc.exe dmdec.exe dedm.exe dedm_raw.exe dmplay.exe
 
 experimental: dm_raw1.exe dm_rawlr.exe dm_raw_autodelta.exe calcdyn.exe
 
@@ -14,6 +14,8 @@ dm_raw_auto.obj:   dm_raw_auto.c tst.h dmcommon.h
 dm_raw_autodelta.obj:   dm_raw_autodelta.c tst.h dmcommon.h
 
 dmenc.obj:   dmenc.c tst.h dmcommon.h
+
+dmdec.obj:   dmdec.c tst.h dmcommon.h
 
 dm_raw1.obj:   dm_raw1.c tst.h dmcommon.h
 
@@ -49,7 +51,10 @@ dm_raw_autodelta.exe: dm_raw_autodelta.obj dmcommon.obj tst.obj
 	
 dmenc.exe: dmenc.obj dmcommon.obj tst.obj 
 	link $(LFLAGS) dmenc dmcommon tst /nologo /out:dmenc.exe
-		
+
+dmdec.exe: dmdec.obj dmcommon.obj tst.obj 
+	link $(LFLAGS) dmdec dmcommon tst /nologo /out:dmdec.exe
+	
 dedm.exe: dedm.obj dmcommon.obj tst.obj 
 	link $(LFLAGS) dedm dmcommon tst /nologo /out:dedm.exe
 
