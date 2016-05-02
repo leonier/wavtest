@@ -74,7 +74,8 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 	fwrite(data, 8, 1, fpo);
 	free(head);
 	free(data);
-	
+	memset(samp, 0, 4);
+	fwrite(samp, 4, 1, fpo);	
 	switch(dminfo->mode)
 	{
 	int deltal, deltar;
@@ -88,7 +89,7 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 			deltal=dminfo->delta&0xffff;
 			deltar=(dminfo->delta-deltal)/0x10000;
 		}
-		for(i=0; i<wav->samples; i++)
+		for(i=0; i<wav->samples-1; i++)
 		{
 			if(!wcount)
 				fread(&wbuf,sizeof(unsigned int),1,fpi);
@@ -119,7 +120,7 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 		}
 		break;
 	case MODE_TYPE1:
-		for(i=0; i<(wav->samples)*2; i++)
+		for(i=0; i<(wav->samples-1)*2; i++)
 		{
 			if(!wcount)
 				fread(&wbuf,sizeof(unsigned int),1,fpi);
@@ -144,7 +145,7 @@ void decodedm(FILE* fpi, wavinfo* wav, dmarg* dminfo)
 		}
 		break;	
 	case MODE_TYPE2:
-		for(i=0; i<wav->samples; i++)
+		for(i=0; i<wav->samples-1; i++)
 		{
 			if(!wcount)
 				fread(&wbuf,sizeof(unsigned int),1,fpi);

@@ -91,7 +91,7 @@ void makededmwav(FILE* fpi, wavinfo* wav)
 	free(data);
 
 	fread(samp, 4,1, fpi);
-	samp1l=(samp[0]+((short)(samp[1])<<8));
+/*	samp1l=(samp[0]+((short)(samp[1])<<8));
 	samp1r=(samp[2]+((short)(samp[3])<<8));
 	
 	samp1l=dmp1bit(samp1l,0,delta);
@@ -100,7 +100,7 @@ void makededmwav(FILE* fpi, wavinfo* wav)
 	samp[0]=samp1l&0xff;
 	samp[1]=(samp1l&0xff00)>>8;
 	samp[2]=samp1r&0xff;
-	samp[3]=(samp1r&0xff00)>>8;	
+	samp[3]=(samp1r&0xff00)>>8;	*/
 	fwrite(samp, 4,1,fpo);
 	
 	while(fread(samp, 4,1,fpi))
