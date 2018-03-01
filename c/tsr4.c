@@ -14,7 +14,10 @@ int main(int argc, char* argv[])
 	int ismono=0;
 	wavhead=malloc(36);
 	if(argc<2) 
+	{
+		printf("Usage: %s wavfile [m]\n", argv[0]);
 		return 0;
+	}
 	if(argc>=3)
 		if(argv[2][0]=='m')
 			ismono=1;
@@ -22,7 +25,10 @@ int main(int argc, char* argv[])
 	wavhead=malloc(36);
 	fp=fopen(argv[1],"rb");
 	if(!fp)
+	{
+		printf("Open WAV file failed!\n");
 		return 0;
+	}
 	fread(wavhead,36,1,fp);
 	if(!parsewaveheader(wavhead,&wi))
 	{
@@ -37,7 +43,10 @@ int main(int argc, char* argv[])
 	sprintf(ofn, "%s.wav", argv[1]);
 	fpo=fopen(ofn, "wb");
 	if(!fpo)
+	{
+		printf("Open output WAV file %s failed!\n", ofn);
 		goto exit;
+	}
 	if(!ismono)
 		cutwavlr(fp, fpo, &wi);
 	else
