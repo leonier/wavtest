@@ -11,9 +11,14 @@ int main(int argc, char* argv[])
 	wavinfo wi;
 	char* ofn;
 	unsigned char* wavhead;
+	int ismono=0;
 	wavhead=malloc(36);
 	if(argc<2) 
 		return 0;
+	if(argc>=3)
+		if(argv[2][0]=='m')
+			ismono=1;
+	
 	wavhead=malloc(36);
 	fp=fopen(argv[1],"rb");
 	if(!fp)
@@ -33,8 +38,10 @@ int main(int argc, char* argv[])
 	fpo=fopen(ofn, "wb");
 	if(!fpo)
 		goto exit;
-		
-	cutwavlr(fp, fpo, &wi);
+	if(!ismono)
+		cutwavlr(fp, fpo, &wi);
+	else
+		cutwavlr_mono(fp, fpo, &wi);
 exit:
 	fclose(fp);
 	free(wavhead);

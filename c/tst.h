@@ -25,3 +25,4 @@ void decodedifferwav(FILE* fpi, wavinfo* wav);
 void makedifferwav(FILE* fpi, wavinfo* wav);
 
 void cutwavlr(FILE* fpi, FILE* fpo, wavinfo* wav);
+void cutwavlr_mono(FILE* fpi, FILE* fpo, wavinfo* wav);
