@@ -23,3 +23,5 @@ void compresswavtohalf(FILE* fpi, wavinfo* wav);
 void makehalfwav(FILE* fpi, wavinfo* wav);
 void decodedifferwav(FILE* fpi, wavinfo* wav);
 void makedifferwav(FILE* fpi, wavinfo* wav);
+
+void cutwavlr(FILE* fpi, FILE* fpo, wavinfo* wav);

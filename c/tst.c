@@ -551,3 +551,37 @@ void decodedifferwav_lr(FILE* fpi, wavinfo* wav)
 	}
 	fclose(fpo);
 }
+
+void cutwavlr(FILE* fpi, FILE* fpo, wavinfo* wav)
+{
+	unsigned char* head,* data;
+	unsigned char samp[4];
+	short samp1=0,samp2=0,sampo=0;
+	if(!fpi || !fpo) 
+		return;
+	if(wav->channel!=2) 
+		return;
+	head=malloc(36);
+	data=malloc(8);
+	writeriffhead(head, 36+8+wav->datalen);
+	writepcmfmt(head+12, wav->channel, wav->srate, wav->bits);
+	writedatachunkhead(data, wav->channel, wav->bits, wav->samples);
+	
+	fwrite(head, 36, 1, fpo);
+	fwrite(data, 8, 1, fpo);
+	free(head);
+	free(data);
+
+	while(fread(samp, 4,1,fpi))
+	{
+		samp1=samp[0]+((short)samp[1]<<8);
+		samp2=samp[2]+((short)samp[3]<<8);
+		sampo=samp1/2+samp2/2;
+		samp[0]=sampo&0xff;
+		samp[1]=(sampo&0xff00)>>8;
+		samp[2]=(~sampo)&0xff;
+		samp[3]=((~sampo)&0xff00)>>8;
+		fwrite(samp,4,1,fpo);
+	}
+	fclose(fpo);
+}
