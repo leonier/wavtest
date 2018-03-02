@@ -552,7 +552,7 @@ void decodedifferwav_lr(FILE* fpi, wavinfo* wav)
 	fclose(fpo);
 }
 
-void cutwavlr(FILE* fpi, FILE* fpo, wavinfo* wav)
+void cutwavlr(FILE* fpi, FILE* fpo, wavinfo* wav, int lr)
 {
 	unsigned char* head,* data;
 	unsigned char samp[4];
@@ -576,11 +576,20 @@ void cutwavlr(FILE* fpi, FILE* fpo, wavinfo* wav)
 	{
 		samp1=samp[0]+((short)samp[1]<<8);
 		samp2=samp[2]+((short)samp[3]<<8);
-		
-		samp[0]=samp1&0xff;
-		samp[1]=(samp1&0xff00)>>8;
-		samp[2]=(~samp2)&0xff;
-		samp[3]=((~samp2)&0xff00)>>8;
+		if(!lr)
+		{
+			samp[0]=samp1&0xff;
+			samp[1]=(samp1&0xff00)>>8;
+			samp[2]=(~samp2)&0xff;
+			samp[3]=((~samp2)&0xff00)>>8;
+		}
+		else
+		{
+			samp[0]=(~samp1)&0xff;
+			samp[1]=((~samp1)&0xff00)>>8;
+			samp[2]=samp2&0xff;
+			samp[3]=(samp2&0xff00)>>8;			
+		}
 		fwrite(samp,4,1,fpo);
 	}
 	fclose(fpo);
